@@ -115,7 +115,7 @@ d3.json("./data/forcast.json", function (data) {
       return y(d.temp);
     })
     .attr("r", 5)
-    .style("fill", "#69b3a2")
+    .style("fill", "#0d6efd")
     //add mouseover event to display the current detail
     .on("mouseover", function (event, d) {
       tooltip.transition().duration(200).style("opacity", 0.9);
