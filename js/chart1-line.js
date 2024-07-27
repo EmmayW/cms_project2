@@ -4,21 +4,21 @@
  * Date: July 26
  */
 //show the current infomation
-let tooltip = d3.select("#tooltip");
+// let tooltip = d3.select("#tooltip");
 
 // set the dimensions and margins of the graph
-let margin = { top: 10, right: 100, bottom: 30, left: 50 },
-  width = 460 - margin.left - margin.right,
-  height = 400 - margin.top - margin.bottom;
+let line_margin = { top: 10, right: 100, bottom: 30, left: 50 },
+  line_width = 460 - line_margin.left - line_margin.right,
+  line_height = 400 - line_margin.top - line_margin.bottom;
 
 // append the svg object to the body of the page
-let svg = d3
+let line_svg = d3
   .select("#line-temperature-of-last-week")
   .append("svg")
-  .attr("width", width + margin.left + margin.right)
-  .attr("height", height + margin.top + margin.bottom)
+  .attr("width", line_width + line_margin.left + line_margin.right)
+  .attr("height", line_height + line_margin.top + line_margin.bottom)
   .append("g")
-  .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+  .attr("transform", "translate(" + line_margin.left + "," + line_margin.top + ")");
 
 //Read the data
 d3.json("./data/forcast.json", function (data) {
@@ -37,17 +37,7 @@ d3.json("./data/forcast.json", function (data) {
       return d;
     }); // corresponding value returned by the button
 
-  let list = data.list;
-
-  let fiveDaysData = [];
-  let xAxisDate = [];
-  //filter one record for each day.
-  list.forEach((element) => {
-    if (element.dt_txt.endsWith("12:00:00")) {
-      fiveDaysData.push(element);
-      xAxisDate.push(element.dt_txt.split(" ")[0]);
-    }
-  });
+  let fiveDaysData = data.list.filter((d) => d.dt_txt.endsWith("15:00:00"));
 
   // Parse the date and temperature
   const formatDate = d3.timeFormat("%Y-%m-%d");
@@ -66,24 +56,24 @@ d3.json("./data/forcast.json", function (data) {
         return d.date;
       })
     ) // Use the correct date field
-    .range([0, width]);
+    .range([0, line_width]);
 
   // Add the X Axis
-  svg
+  line_svg
     .append("g")
-    .attr("transform", `translate(0,${height})`)
+    .attr("transform", `translate(0,${line_height})`)
     .call(d3.axisBottom(x).tickFormat(d3.timeFormat("%b %d")));
 
   // Add Y axis
   const y = d3
     .scaleLinear()
     .domain([d3.min(fiveDaysData, (d) => d.temp) - 1, d3.max(fiveDaysData, (d) => d[getSelectAttr()]) + 1])
-    .range([height, 0]);
+    .range([line_height, 0]);
 
   // Add the Y Axis
-  svg.append("g").attr("class", "y-axis").call(d3.axisLeft(y)).selectAll("text");
+  line_svg.append("g").attr("class", "y-axis").call(d3.axisLeft(y)).selectAll("text");
   //draw the line
-  let line = svg
+  let line = line_svg
     .append("g")
     .append("path")
     .datum(fiveDaysData)
@@ -103,7 +93,7 @@ d3.json("./data/forcast.json", function (data) {
     .style("fill", "none");
 
   // Initialize dots
-  let dot = svg
+  let dot = line_svg
     .selectAll("circle")
     .data(fiveDaysData)
     .enter()
@@ -154,11 +144,11 @@ d3.json("./data/forcast.json", function (data) {
     const y = d3
       .scaleLinear()
       .domain([d3.min(fiveDaysData, (d) => d[attrSelected]) - 1, d3.max(fiveDaysData, (d) => d[attrSelected]) + 1])
-      .range([height, 0]);
+      .range([line_height, 0]);
 
     // Add the Y Axis
-    svg.selectAll(".y-axis").remove();
-    let y_axis = svg.append("g").attr("class", "y-axis").call(d3.axisLeft(y));
+    line_svg.selectAll(".y-axis").remove();
+    let y_axis = line_svg.append("g").attr("class", "y-axis").call(d3.axisLeft(y));
     if ("pressure" === attrSelected) {
       y_axis.selectAll("text").style("text-anchor", "end").attr("dx", "-0.8em").attr("dy", "0.15em").attr("transform", "rotate(-45)");
     }
