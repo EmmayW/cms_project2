@@ -1,4 +1,5 @@
-// JSON data
+// Anoop Krishnan Ramachandran
+// Student ID: 8826078
 const jsonData = {
     "cols": [
         {
@@ -82,7 +83,7 @@ svg.append("g")
     .selectAll("text")
     .style("fill", "white");
 
-// Create bars
+// Create bars with hover effect
 svg.selectAll(".bar")
     .data(data)
     .enter()
@@ -92,7 +93,19 @@ svg.selectAll(".bar")
     .attr("y", d => y(d.snowfall))
     .attr("width", x.bandwidth())
     .attr("height", d => height - y(d.snowfall))
-    .attr("fill", "steelblue");
+    .attr("fill", "white")
+    .on("mouseover", function(event, d) {
+        d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("fill", "green");
+    })
+    .on("mouseout", function(event, d) {
+        d3.select(this)
+            .transition()
+            .duration(200)
+            .attr("fill", "white");
+    });
 
 // Add labels
 svg.selectAll(".label")

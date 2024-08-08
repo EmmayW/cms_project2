@@ -1,4 +1,5 @@
-// Sample data
+// Anoop Krishnan Ramachandran
+// Student ID: 8826078
 const ScatterJsonData = {
     "cols": [
         {
@@ -81,6 +82,11 @@ scatter_svg.append("g")
     .selectAll("text")
     .style("fill", "black");
 
+// Create tooltip
+tooltip2 = d3.select("body").append("div")
+    .attr("class", "tooltip")
+    .style("opacity", 0);
+
 // Create scatter plot points
 scatter_svg.selectAll(".dot")
     .data(scatterdata)
@@ -90,15 +96,33 @@ scatter_svg.selectAll(".dot")
     .attr("cx", d => scatter_x(d.year))
     .attr("cy", d => scatter_y(d.temperature))
     .attr("r", 5)
-    .style("fill", "steelblue")
+    .style("fill", "black")
     .style("stroke", "#fff")
     .style("stroke-width", "1.5px")
     .on("mouseover", function (event, d) {
-        tooltip2.transition().duration(500).style("opacity", 0.9);
+        d3.select(this).style("fill", "red");
+        tooltip2.transition().duration(200).style("opacity", 0.9);
         tooltip2.html(`Year: ${event.year.getFullYear()}<br/>Temperature: ${event.temperature}°C`)
-            .style("left", `${event.pageX + 5}px`)
-            .style("top", `${event.pageY - 28}px`);
+            .style("left", d3.event.pageX + 10 + "px")
+            .style("top", d3.event.pageY - 28 + "px");
     })
-    .on("mouseout", function (d) {
+    .on("mouseout", function () {
+        d3.select(this).style("fill", "black");
         tooltip2.transition().duration(500).style("opacity", 0);
     });
+
+// Tooltip styling (CSS)
+d3.select("head").append("style").text(`
+    .tooltip {
+        position: absolute;
+        text-align: center;
+        width: 150px;
+        height: 40px;
+        padding: 5px;
+        font: 12px sans-serif;
+        background: lightsteelblue;
+        border: 0px;
+        border-radius: 8px;
+        pointer-events: none;
+    }
+`);
